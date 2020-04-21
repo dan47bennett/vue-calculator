@@ -1,25 +1,25 @@
 <template>
-  <div class="calculator">
-    <span class="display">{{ currentValue || '0' }}</span>
+  <div class="Calculator">
 
-    <button class="number" @click="appendDigit(7)">7</button>
-    <button class="number" @click="appendDigit(8)">8</button>
-    <button class="number" @click="appendDigit(9)">9</button>
+    <span class="Calculator__display" v-text="displayValue"/>
 
-    <button class="operation" @click="clear">C</button>
+    <div class="Calculator__inputs">
 
-    <button class="number" @click="appendDigit(4)">4</button>
-    <button class="number" @click="appendDigit(5)">5</button>
-    <button class="number" @click="appendDigit(6)">6</button>
+      <div class="Calculator__inputs--numbers">
+        <button
+          v-for="num in [1,2,3,4,5,6,7,8,9,0]"
+          :key="num"
+          @click="appendDigit(num)"
+          v-text="num"/>
+        </div>
 
-    <button class="operation" @click="add">+</button>
+      <div class="Calculator__inputs--operators">
+        <button @click="add">+</button>
+        <button @click="clear">C</button>
+        <button @click="equals">=</button>
+      </div>
 
-    <button class="number" @click="appendDigit(1)">1</button>
-    <button class="number" @click="appendDigit(2)">2</button>
-    <button class="number" @click="appendDigit(3)">3</button>
-
-    <button class="operation" @click="equals">=</button>
-
+    </div>
 
   </div>
 </template>
@@ -28,25 +28,27 @@
 export default {
   data() {
     return {
-      currentValue: '',
+      value: null,
       previousValue: '',
       operatorClicked: null,
       operator: null
     }
   },
+  computed: {
+    displayValue() {
+      if (!this.value) return 0;
+      return this.value;
+    }
+  },
   methods: {
     appendDigit(number) {
-      let newValue;
-      if (this.currentValue === '0') {
-        newValue = number
-      }
-      else {
-        newValue = this.currentValue + number
-      }
-      this.currentValue = newValue
+      if (!this.value) return this.value = number;
+      let valueString = this.value.toString();
+      valueString +=  number.toString();
+      this.value = parseInt(valueString);
     },
     clear() {
-      this.currentValue = ''
+      this.value = null;
     },
     operatorSwitch() {
       this.previousValue = this.currentValue;
@@ -66,28 +68,29 @@ export default {
   }
 }
 
-
-
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-  .calculator {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+<style lang="scss">
+
+.Calculator {
+
+  &__display {
+    color: green;
   }
 
-  .display {
-    grid-column: 1 / 5;
+  &__inputs {
+
+    &--numbers {
+      background-color:darkgrey;
+      color: white
+
+    }
+
+    &--operators {
+      background-color:orange;
+      color: white
+    }
   }
 
-  .operation {
-    background-color:orange;
-    color: white
-  }
-
-  .number {
-    background-color:darkgrey;
-    color: white
-  }
+}
 </style>
