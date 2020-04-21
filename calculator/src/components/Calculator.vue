@@ -1,10 +1,10 @@
 <template>
   <div class="calculator">
-    <div class="display">{{ currentValue }}</div>
-    <button class="number">1</button>
-    <button class="number">2</button>
-    <button class="number">3</button>
-    <button class="number">4</button>
+    <div class="display">{{ currentValue || '0' }}</div>
+    <button class="number" @click="addToCurrentValue(1)">1</button>
+    <button class="number" @click="addToCurrentValue(2)">2</button>
+    <button class="number" @click="addToCurrentValue(3)">3</button>
+    <button class="number" @click="addToCurrentValue(4)">4</button>
   </div>
 </template>
 
@@ -12,7 +12,19 @@
 export default {
   data() {
     return {
-      currentValue: '123'
+      currentValue: ''
+    }
+  },
+  methods: {
+    addToCurrentValue(number) {
+      let newValue;
+      if (this.currentValue === '0') {
+        newValue = number
+      }
+      else {
+        newValue = this.currentValue + number
+      }
+      this.currentValue = newValue
     }
   }
 }
