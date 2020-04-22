@@ -8,32 +8,36 @@
       <div class="Calculator__inputs__main">
 
         <div class="Calculator__inputs__main__actions">
-          <button v-text="'AC'" @click="onClearClick"/>
+          <input-button v-text="'AC'" @click="onClearClick"/>
+
+
+
           <!-- Add the actions +/-, % here -->
         </div>
 
         <div class="Calculator__inputs__main__numbers">
 
-          <button
-            v-for="num in [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]"
+          <input-button
+            variant="light"
+            v-for="num in ['9', '8', '7', '6', '5', '4', '3', '2', '1', '0']"
             :key="num"
             v-text="num"
             @click="onNumberClick(num)"/>
 
-          <button v-text="'.'" @click="onDecimalClick"/>
+          <input-button v-text="'.'" @click="onDecimalClick"/>
 
         </div>
 
       </div>
 
       <div class="Calculator__inputs__side">
-        <button
+        <input-button variant="orange"
           v-for="operator in ['÷', 'x', '-', '+']"
           :key="operator"
           v-text="operator"
           @click="onOperatorClick(operator)"/>
 
-        <button v-text="'='" @click="onEqualsClick"/>
+        <input-button variant="orange" v-text="'='" @click="onEqualsClick"/>
       </div>
 
     </div>
@@ -42,7 +46,14 @@
 </template>
 
 <script>
+import InputButton from '@/components/InputButton.vue'
+
 export default {
+
+  components: {
+    InputButton
+  },
+
   data() {
     return {
       value: null,
@@ -59,15 +70,13 @@ export default {
   computed: {
     displayValue() {
       if (!this.value) return 0;
-      return this.value;
+      return parseFloat(this.value);
     }
   },
   methods: {
     onNumberClick(number) {
       if (!this.value) return this.value = number;
-      let valueString = this.value.toString();
-      valueString +=  number.toString();
-      this.value = parseInt(valueString);
+      this.value +=  number;
     },
     onDecimalClick() {
       alert('not yet implemented init');
@@ -84,7 +93,7 @@ export default {
     },
     onEqualsClick() {
       const operation = this.operators[this.operator];
-      this.value = operation(this.previousValue, this.value);
+      this.value = operation(parseFloat(this.previousValue), parseFloat(this.value));
       this.previousValue = null;
     }
   }
@@ -99,13 +108,6 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
-  button {
-    width: 75px;
-    height: 75px;
-    font-size: 24px;
-    border-radius: 100%;
-  }
 
   &__display {
     color: white;
@@ -122,30 +124,10 @@ export default {
 
     &__main {
       width: 80%;
-
-      &__actions {
-        button {
-          background-color:lightgrey;
-          color: black
-        }
-      }
-
-      &__numbers {
-        button {
-          background-color:darkgrey;
-          color: white
-        }
-      }
-
     }
 
     &__side {
       width: 20%;
-
-      button {
-        background-color:orange;
-        color: white;
-      }
     }
   }
 
