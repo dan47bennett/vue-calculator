@@ -5,18 +5,35 @@
 
     <div class="Calculator__inputs">
 
-      <div class="Calculator__inputs--numbers">
-        <button
-          v-for="num in [1,2,3,4,5,6,7,8,9,0]"
-          :key="num"
-          @click="appendDigit(num)"
-          v-text="num"/>
+      <div class="Calculator__inputs__main">
+
+        <div class="Calculator__inputs__main__actions">
+          <button v-text="'AC'" @click="onClearClick"/>
+          <!-- Add the actions +/-, % here -->
         </div>
 
-      <div class="Calculator__inputs--operators">
-        <button @click="add">+</button>
-        <button @click="clear">C</button>
-        <button @click="equals">=</button>
+        <div class="Calculator__inputs__main__numbers">
+
+          <button
+            v-for="num in [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]"
+            :key="num"
+            v-text="num"
+            @click="onNumberClick(num)"/>
+
+          <button v-text="'.'" @click="onDecimalClick"/>
+
+        </div>
+
+      </div>
+
+      <div class="Calculator__inputs__side">
+        <button
+          v-for="operator in ['÷', 'x', '-', '+']"
+          :key="operator"
+          v-text="operator"
+          @click="onOperatorClick(operator)"/>
+
+        <button v-text="'='" @click="onEqualsClick"/>
       </div>
 
     </div>
@@ -29,9 +46,14 @@ export default {
   data() {
     return {
       value: null,
-      previousValue: '',
-      operatorClicked: null,
-      operator: null
+      previousValue: null,
+      operator: null,
+      operators: {
+        '÷': (a, b) => a / b,
+        'x': (a, b) => a * b,
+        '-': (a, b) => a - b,
+        '+': (a, b) => a + b
+      }
     }
   },
   computed: {
@@ -41,29 +63,29 @@ export default {
     }
   },
   methods: {
-    appendDigit(number) {
+    onNumberClick(number) {
       if (!this.value) return this.value = number;
       let valueString = this.value.toString();
       valueString +=  number.toString();
       this.value = parseInt(valueString);
     },
-    clear() {
+    onDecimalClick() {
+      alert('not yet implemented init');
+    },
+    onOperatorClick(symbol) {
+      this.operator = symbol;
+      this.previousValue = this.value;
       this.value = null;
     },
-    operatorSwitch() {
-      this.previousValue = this.currentValue;
-      this.operatorClicked = true
-      this.currentValue = ''
+    onClearClick() {
+      this.value = null;
+      this.previousValue = null;
+      this.operator = null;
     },
-    add() {
-      this.operator = (a, b) => a + b;
-      this.operatorSwitch();
-    },
-    equals() {
-      this.currentValue = this.operator(
-        parseFloat(this.previousValue),
-        parseFloat(this.currentValue));
-      this.previousValue = ''
+    onEqualsClick() {
+      const operation = this.operators[this.operator];
+      this.value = operation(this.previousValue, this.value);
+      this.previousValue = null;
     }
   }
 }
@@ -73,22 +95,57 @@ export default {
 <style lang="scss">
 
 .Calculator {
+  background: black;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  button {
+    width: 75px;
+    height: 75px;
+    font-size: 24px;
+    border-radius: 100%;
+  }
 
   &__display {
-    color: green;
+    color: white;
+    font-size: 2rem;
+    padding: 2rem;
+    font-size: 64px;
+    width: 100%;
   }
 
   &__inputs {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 
-    &--numbers {
-      background-color:darkgrey;
-      color: white
+    &__main {
+      width: 80%;
+
+      &__actions {
+        button {
+          background-color:lightgrey;
+          color: black
+        }
+      }
+
+      &__numbers {
+        button {
+          background-color:darkgrey;
+          color: white
+        }
+      }
 
     }
 
-    &--operators {
-      background-color:orange;
-      color: white
+    &__side {
+      width: 20%;
+
+      button {
+        background-color:orange;
+        color: white;
+      }
     }
   }
 
