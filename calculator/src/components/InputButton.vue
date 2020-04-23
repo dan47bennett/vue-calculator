@@ -1,5 +1,7 @@
 <template>
-    <button class="InputButton" :class="`InputButton--${variant}`" @click.prevent="$emit('click')">
+    <button
+        :class="classNames"
+        @click.prevent="$emit('click')">
         <slot/>
     </button>
 </template>
@@ -9,19 +11,43 @@ export default {
     props: {
         variant: {
             type: String
+        },
+        highlight: {
+            type: Boolean,
+            default: false
+        },
+        wide: {
+            type: Boolean,
+            default: false
+        }
+    },
+    computed: {
+        classNames() {
+            let classNames = 'InputButton';
+            if (this.variant) classNames += ` InputButton--${this.variant}`;
+            if (this.wide) classNames += ` InputButton--wide`;
+            if (this.highlight) classNames += ' highlight';
+            return classNames;
         }
     }
 }
 </script>
 
 <style lang="scss">
+$width: 75px;
+
 .InputButton {
-    width: 75px;
-    height: 75px;
+    width: $width;
+    height: $width;
     font-size: 24px;
     border-radius: 100%;
     background-color:darkgrey;
     color: white;
+
+    &--wide {
+        width: $width * 2;
+        border-radius: 15%;
+    }
 
     &--light {
         background-color:lightgrey;
@@ -31,6 +57,11 @@ export default {
     &--orange {
         background-color:orange;
         color: white;
+
+        &.highlight {
+            color:orange;
+            background-color: white;
+        }
     }
 
 }
